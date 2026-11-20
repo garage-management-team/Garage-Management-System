@@ -1,0 +1,58 @@
+services:
+  # ==========================================
+  # CUSTOMER BACKEND
+  # ==========================================
+  customer-backend:
+    build:
+      context: ./backend/customer-backend
+      dockerfile: Dockerfile
+
+    container_name: gms-customer-backend
+    restart: unless-stopped
+
+    ports:
+      - "8081:8081"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gms_customer_db
+      SPRING_DATASOURCE_USERNAME: gms_admin
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: "true"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ==========================================
+  # POSTGRESQL DATABASE
+  # ==========================================
+  postgres:
+    image: postgres:17
+    container_name: gms-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: gms_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init:/docker-entrypoint-initdb.d:ro
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U gms_admin -d postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+
+
