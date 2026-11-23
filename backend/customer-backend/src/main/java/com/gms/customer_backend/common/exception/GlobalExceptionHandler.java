@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.gms.customer_backend.common.exception.EmailAlreadyExistsException;
+import com.gms.customer_backend.common.exception.InvalidCredentialsException;
 import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
@@ -74,5 +75,18 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidCredentials(
+            InvalidCredentialsException exception) {
+
+        ApiResponse<Void> response =
+                new ApiResponse<>(false, exception.getMessage(), null);
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(response);
     }
 }

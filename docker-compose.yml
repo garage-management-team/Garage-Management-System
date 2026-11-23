@@ -17,6 +17,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gms_customer_db
       SPRING_DATASOURCE_USERNAME: gms_admin
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
 
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_FLYWAY_ENABLED: "true"

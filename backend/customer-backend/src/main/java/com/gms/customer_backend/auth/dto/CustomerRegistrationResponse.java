@@ -1,4 +1,4 @@
-package com.gms.customer_backend.auth.dto.response;
+package com.gms.customer_backend.auth.dto;
 
 import java.util.UUID;
 import lombok.Getter;

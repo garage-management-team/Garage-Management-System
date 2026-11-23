@@ -1,4 +1,4 @@
-package com.gms.customer_backend.auth.dto.request;
+package com.gms.customer_backend.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
