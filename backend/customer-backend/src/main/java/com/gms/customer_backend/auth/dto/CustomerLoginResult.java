@@ -1,10 +1,5 @@
 package com.gms.customer_backend.auth.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class CustomerLoginResult {
 
     private final CustomerLoginResponse customer;
@@ -13,5 +8,12 @@ public class CustomerLoginResult {
     public CustomerLoginResult(CustomerLoginResponse customer, String token) {
         this.customer = customer;
         this.token = token;
+    }
+    public CustomerLoginResponse getCustomer() {
+        return customer;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

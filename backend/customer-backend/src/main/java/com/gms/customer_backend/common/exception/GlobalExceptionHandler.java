@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.gms.customer_backend.common.exception.EmailAlreadyExistsException;
 import com.gms.customer_backend.common.exception.InvalidCredentialsException;
+import com.gms.customer_backend.common.exception.CustomerNotAuthenticatedException;
 import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
@@ -88,5 +89,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(response);
+    }
+
+    @ExceptionHandler(CustomerNotAuthenticatedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCustomerNotAuthenticated(
+            CustomerNotAuthenticatedException ex) {
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                ex.getMessage(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }

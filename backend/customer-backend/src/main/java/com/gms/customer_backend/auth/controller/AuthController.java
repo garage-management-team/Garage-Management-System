@@ -76,4 +76,25 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(response);
     }
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logoutCustomer() {
+
+        ResponseCookie cookie = ResponseCookie.from("ACCESS_TOKEN", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                true,
+                "Logout successful",
+                null
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
+    }
 }
