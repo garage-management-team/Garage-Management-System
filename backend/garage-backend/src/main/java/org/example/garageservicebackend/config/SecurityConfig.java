@@ -16,14 +16,20 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import jakarta.servlet.DispatcherType;
+import org.example.garageservicebackend.security.JwtAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.example.garageservicebackend.security.JwtService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,AuthenticationProvider authenticationProvider)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            AuthenticationProvider authenticationProvider,
+            JwtAuthenticationFilter jwtAuthenticationFilter
+    ) throws Exception {
 
         return http
                 .csrf(csrf -> csrf.disable())
@@ -44,6 +50,11 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .anyRequest().authenticated()
+                )
+
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
                 )
 
                 .build();
@@ -72,5 +83,13 @@ public class SecurityConfig {
             AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(
+            JwtService jwtService,
+            ManagerUserDetailsService userDetailsService
+    ) {
+        return new JwtAuthenticationFilter(jwtService, userDetailsService);
     }
 }
