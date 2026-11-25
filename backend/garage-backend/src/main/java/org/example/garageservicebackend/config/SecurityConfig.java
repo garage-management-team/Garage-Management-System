@@ -48,8 +48,12 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+
                         .requestMatchers("/api/auth/login").permitAll()
-                        .anyRequest().authenticated()
+
+                        .requestMatchers("/api/auth/register").hasRole("MANAGER")
+
+                        .anyRequest().hasRole("MANAGER")
                 )
 
                 .addFilterBefore(
