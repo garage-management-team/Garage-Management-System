@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 1. Read cookies from the request
         Cookie[] cookies = request.getCookies();
 
-        // 2. Find the ACCESS_TOKEN cookie
+        // 2. Find the ACCESS_TOKEN cookiex
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("ACCESS_TOKEN".equals(cookie.getName())) {

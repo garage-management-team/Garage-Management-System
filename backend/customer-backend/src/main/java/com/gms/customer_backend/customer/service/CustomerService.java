@@ -8,17 +8,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.gms.customer_backend.customer.dto.CustomerProfileUpdateRequest;
-
+import lombok.AllArgsConstructor;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-
-    public CustomerService(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
 
     // Get the currently authenticated customer's ID
     public String getCurrentCustomerId() {

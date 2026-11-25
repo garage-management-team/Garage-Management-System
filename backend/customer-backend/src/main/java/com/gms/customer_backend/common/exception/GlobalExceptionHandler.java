@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import com.gms.customer_backend.common.exception.EmailAlreadyExistsException;
 import com.gms.customer_backend.common.exception.InvalidCredentialsException;
 import com.gms.customer_backend.common.exception.CustomerNotAuthenticatedException;
+import com.gms.customer_backend.common.exception.VehicleNotFoundException;
 import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
@@ -102,5 +103,29 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(
+            IllegalArgumentException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                ));
+    }
+
+    @ExceptionHandler(VehicleNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleVehicleNotFoundException(
+            VehicleNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                ));
     }
 }
