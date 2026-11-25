@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.example.garageservicebackend.security.JwtService;
+import org.example.garageservicebackend.dto.request.ManagerLoginRequest;
+import org.example.garageservicebackend.dto.response.ManagerLoginResponse;
+import org.example.garageservicebackend.security.ManagerUserDetails;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -23,17 +27,20 @@ public class ManagerAuthService {
     private final GarageManagerRepository garageManagerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public ManagerAuthService(
             GaragePersonnelRepository garagePersonnelRepository,
             GarageManagerRepository garageManagerRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            JwtService jwtService
     ) {
         this.garagePersonnelRepository = garagePersonnelRepository;
         this.garageManagerRepository = garageManagerRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     private void validateEmailNotExists(String email) {
@@ -100,6 +107,34 @@ public class ManagerAuthService {
                 "Manager registered successfully"
         );
     }
+
+    public ManagerLoginResponse loginManager(ManagerLoginRequest request) {
+
+        // 1. Authenticate manager credentials
+        Authentication authentication = authenticateManager(
+                request.getEmail(),
+                request.getPassword()
+        );
+
+        // 2. Get authenticated manager details
+        ManagerUserDetails managerDetails =
+                (ManagerUserDetails) authentication.getPrincipal();
+
+        // 3. Generate JWT
+        String token = jwtService.generateToken(managerDetails);
+
+        // 4. Return login response
+        return new ManagerLoginResponse(
+                managerDetails.getManagerId(),
+                managerDetails.getFullName(),
+                managerDetails.getEmail(),
+                token,
+                "Bearer",
+                jwtService.getJwtExpiration()
+        );
+    }
+
+
 
 
 }
