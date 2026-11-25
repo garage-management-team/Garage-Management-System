@@ -26,6 +26,30 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+  # ==========================================
+  # GARAGE BACKEND
+  # ==========================================
+  garage-backend:
+    build:
+      context: ./backend/garage-backend
+      dockerfile: Dockerfile
+
+    container_name: gms-garage-backend
+    restart: unless-stopped
+
+    ports:
+      - "8082:8082"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gms_garage_db
+      SPRING_DATASOURCE_USERNAME: gms_admin
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   # ==========================================
   # POSTGRESQL DATABASE
