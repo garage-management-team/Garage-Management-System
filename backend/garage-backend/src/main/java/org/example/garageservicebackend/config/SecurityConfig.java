@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import jakarta.servlet.DispatcherType;
 
 @Configuration
 @EnableWebSecurity
@@ -39,9 +40,8 @@ public class SecurityConfig {
                         )
                 )
 
-                .authenticationProvider(authenticationProvider)
-
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )

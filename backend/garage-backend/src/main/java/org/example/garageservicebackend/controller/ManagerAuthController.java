@@ -7,6 +7,8 @@ import org.example.garageservicebackend.service.ManagerAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.example.garageservicebackend.dto.request.ManagerLoginRequest;
+import org.example.garageservicebackend.dto.response.ManagerLoginResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,5 +31,16 @@ public class ManagerAuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ManagerLoginResponse> loginManager(
+            @Valid @RequestBody ManagerLoginRequest request
+    ) {
+
+        ManagerLoginResponse response =
+                managerAuthService.loginManager(request);
+
+        return ResponseEntity.ok(response);
     }
 }

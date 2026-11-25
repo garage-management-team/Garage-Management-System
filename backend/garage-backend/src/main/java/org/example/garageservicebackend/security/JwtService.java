@@ -64,4 +64,7 @@ public class JwtService {
             return false;
         }
     }
+    public long getJwtExpiration() {
+        return jwtExpiration;
+    }
 }
