@@ -9,6 +9,9 @@ import org.example.garageservicebackend.repository.GaragePersonnelRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -19,15 +22,18 @@ public class ManagerAuthService {
     private final GaragePersonnelRepository garagePersonnelRepository;
     private final GarageManagerRepository garageManagerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public ManagerAuthService(
             GaragePersonnelRepository garagePersonnelRepository,
             GarageManagerRepository garageManagerRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager
     ) {
         this.garagePersonnelRepository = garagePersonnelRepository;
         this.garageManagerRepository = garageManagerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     private void validateEmailNotExists(String email) {
@@ -37,6 +43,12 @@ public class ManagerAuthService {
                     "A manager with this email already exists"
             );
         }
+    }
+    public Authentication authenticateManager(String email, String password) {
+
+        return authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password)
+        );
     }
 
     @Transactional
@@ -88,4 +100,6 @@ public class ManagerAuthService {
                 "Manager registered successfully"
         );
     }
+
+
 }

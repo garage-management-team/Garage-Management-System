@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.example.garageservicebackend.security.ManagerUserDetailsService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -64,5 +66,11 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
 
         return provider;
+    }
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration
+    ) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
