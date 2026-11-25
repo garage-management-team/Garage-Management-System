@@ -56,7 +56,7 @@ public class Booking {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
     private BookingStatus status = BookingStatus.PROCESSING;
 
