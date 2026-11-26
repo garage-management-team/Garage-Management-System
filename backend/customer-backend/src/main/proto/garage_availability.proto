@@ -19,7 +19,7 @@ service GarageAvailabilityService {
 // Request message
 message AvailabilityRequest {
 
-    string service_type_id = 1;
+    string service_id = 1;
 
     string date = 2;
 }
@@ -35,7 +35,7 @@ message AvailableSlot {
 
     string slot_id = 1;
 
-    string service_type_id = 2;
+    string service_id = 2;
 
     string service_name = 3;
 

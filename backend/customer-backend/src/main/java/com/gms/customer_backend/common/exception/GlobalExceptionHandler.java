@@ -11,6 +11,7 @@ import com.gms.customer_backend.common.exception.EmailAlreadyExistsException;
 import com.gms.customer_backend.common.exception.InvalidCredentialsException;
 import com.gms.customer_backend.common.exception.CustomerNotAuthenticatedException;
 import com.gms.customer_backend.common.exception.VehicleNotFoundException;
+import com.gms.customer_backend.common.exception.GarageServiceUnavailableException;
 import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
@@ -127,5 +128,21 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         null
                 ));
+    }
+
+    // Handles Garage Backend unavailable errors (HTTP 503)
+    @ExceptionHandler(GarageServiceUnavailableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleGarageServiceUnavailable(
+            GarageServiceUnavailableException exception) {
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                false,
+                exception.getMessage(),
+                null
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(response);
     }
 }
