@@ -23,6 +23,9 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SPRING_FLYWAY_ENABLED: "true"
 
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     depends_on:
       postgres:
         condition: service_healthy
