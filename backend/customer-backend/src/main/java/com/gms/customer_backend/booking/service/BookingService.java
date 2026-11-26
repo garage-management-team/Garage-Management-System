@@ -5,7 +5,8 @@ import com.gms.customer_backend.booking.dto.response.AvailableSlotResponse;
 import com.gms.customer_backend.vehicle.entity.Vehicle;
 import com.gms.customer_backend.vehicle.repository.VehicleRepository;
 import com.gms.customer_backend.booking.grpc.GarageAvailabilityGrpcClient;
-
+import com.gms.customer_backend.booking.dto.response.GarageServiceResponse;
+import com.gms.customer_backend.booking.grpc.GarageServicesGrpcClient;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class BookingService {
 
     private final VehicleRepository vehicleRepository;
     private final GarageAvailabilityGrpcClient garageAvailabilityGrpcClient;
+    private final GarageServicesGrpcClient garageServicesGrpcClient;
 
     @Transactional(readOnly = true)
     public List<AvailableSlotResponse> getAvailableSlots(
@@ -45,4 +47,10 @@ public class BookingService {
                 request.getDate()
         );
     }
+
+    public List<GarageServiceResponse> getActiveServices() {
+        return garageServicesGrpcClient.getActiveServices();
+    }
+
+
 }

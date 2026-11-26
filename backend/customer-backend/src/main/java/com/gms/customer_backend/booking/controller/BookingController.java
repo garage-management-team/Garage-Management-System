@@ -4,7 +4,7 @@ import com.gms.customer_backend.booking.dto.request.AvailableSlotRequest;
 import com.gms.customer_backend.booking.dto.response.AvailableSlotResponse;
 import com.gms.customer_backend.booking.service.BookingService;
 import com.gms.customer_backend.common.response.ApiResponse;
-
+import com.gms.customer_backend.booking.dto.response.GarageServiceResponse;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -47,4 +47,20 @@ public class BookingController {
                 )
         );
     }
+
+    @GetMapping("/services")
+    public ResponseEntity<ApiResponse<List<GarageServiceResponse>>> getActiveServices() {
+
+        List<GarageServiceResponse> services =
+                bookingService.getActiveServices();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Active services retrieved successfully",
+                        services
+                )
+        );
+    }
+
 }
