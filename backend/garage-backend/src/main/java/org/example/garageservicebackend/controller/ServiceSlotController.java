@@ -14,6 +14,9 @@ import java.util.UUID;
 import org.example.garageservicebackend.dto.request.UpdateServiceSlotRequest;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +80,22 @@ public class ServiceSlotController {
         serviceSlotService.deactivateServiceSlot(slotId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<ServiceSlotResponse>> getAvailableServiceSlots(
+            @RequestParam UUID serviceTypeId,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date) {
+
+        List<ServiceSlotResponse> response =
+                serviceSlotService.getAvailableServiceSlots(
+                        serviceTypeId,
+                        date
+                );
+
+        return ResponseEntity.ok(response);
     }
 
 }

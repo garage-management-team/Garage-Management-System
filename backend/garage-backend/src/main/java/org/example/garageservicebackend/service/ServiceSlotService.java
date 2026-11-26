@@ -20,6 +20,7 @@ import java.time.ZoneOffset;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 import org.example.garageservicebackend.repository.BookingRepository;
 import org.example.garageservicebackend.entity.Booking;
@@ -67,9 +68,9 @@ public class ServiceSlotService {
 
         // 5. Validate that the start time is not in the past
         if (request.getSlotDate().isEqual(
-                java.time.LocalDate.now(ZoneOffset.UTC))
+                LocalDate.now(ZoneId.of("Asia/Colombo")))
                 && request.getStartTime().isBefore(
-                java.time.LocalTime.now(ZoneOffset.UTC))) {
+                LocalTime.now(ZoneId.of("Asia/Colombo")))) {
 
             throw new IllegalArgumentException(
                     "Start time cannot be in the past");
@@ -239,10 +240,11 @@ public class ServiceSlotService {
                     "Service duration must be greater than zero");
         }
 
-        LocalDate today = LocalDate.now(ZoneOffset.UTC);
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Colombo"));
 
         if (request.getSlotDate().isEqual(today)
-                && request.getStartTime().isBefore(LocalTime.now(ZoneOffset.UTC))) {
+                && request.getStartTime().isBefore(LocalTime.now(ZoneId.of("Asia/Colombo")))) {
             throw new IllegalArgumentException("Start time cannot be in the past");
         }
 
@@ -313,5 +315,30 @@ public class ServiceSlotService {
         slot.setUpdatedAt(OffsetDateTime.now(ZoneOffset.UTC));
 
         serviceSlotRepository.save(slot);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ServiceSlotResponse> getAvailableServiceSlots(
+            UUID serviceTypeId,
+            LocalDate slotDate) {
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Colombo"));
+        LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Colombo"));
+
+        return serviceSlotRepository
+                .findByServiceTypeServiceTypeIdAndSlotDateAndActiveTrue(
+                        serviceTypeId,
+                        slotDate
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .filter(slot -> slot.getAvailableSpaces() > 0)
+                .filter(slot -> {
+                    if (slotDate.isEqual(today)) {
+                        return slot.getStartTime().isAfter(currentTime);
+                    }
+                    return slotDate.isAfter(today);
+                })
+                .toList();
     }
 }
