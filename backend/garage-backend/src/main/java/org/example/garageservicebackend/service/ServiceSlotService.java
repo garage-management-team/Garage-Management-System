@@ -10,7 +10,6 @@ import org.example.garageservicebackend.entity.ServiceType;
 import org.example.garageservicebackend.repository.GarageManagerRepository;
 import org.example.garageservicebackend.repository.ServiceSlotRepository;
 import org.example.garageservicebackend.repository.ServiceTypeRepository;
-import java.util.List;
 import org.example.garageservicebackend.dto.request.UpdateServiceSlotRequest;
 
 import org.springframework.stereotype.Service;
@@ -77,7 +76,26 @@ public class ServiceSlotService {
         }
 
         // 6. Calculate end time automatically
-        var endTime = request.getStartTime().plusMinutes(duration);
+
+        LocalTime endTime = request.getStartTime().plusMinutes(duration);
+
+        if (!endTime.isAfter(request.getStartTime())) {
+            throw new IllegalArgumentException(
+                    "Service slot cannot extend beyond midnight");
+        }
+
+        boolean slotOverlaps =
+                serviceSlotRepository
+                        .existsBySlotDateAndActiveTrueAndStartTimeLessThanAndEndTimeGreaterThan(
+                                request.getSlotDate(),
+                                endTime,
+                                request.getStartTime()
+                        );
+
+        if (slotOverlaps) {
+            throw new IllegalArgumentException(
+                    "Another active slot already exists during the selected time");
+        }
 
         // 7. Set timestamps
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
@@ -168,6 +186,8 @@ public class ServiceSlotService {
         return mapToResponse(slot);
     }
     //update service slot
+
+
     @Transactional
     public ServiceSlotResponse updateServiceSlot(
             UUID slotId,
@@ -176,7 +196,32 @@ public class ServiceSlotService {
         ServiceSlot slot = serviceSlotRepository.findById(slotId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Service slot not found"));
+        long bookedVehicles =
+                bookingRepository.countBySlotSlotIdAndBookingStatusIn(
+                        slotId,
+                        List.of(
+                                Booking.BookingStatus.PENDING,
+                                Booking.BookingStatus.CONFIRMED
+                        )
+                );
 
+        boolean hasBookings = bookedVehicles > 0;
+        if (hasBookings) {
+            boolean serviceTypeChanged =
+                    !slot.getServiceType().getServiceTypeId()
+                            .equals(request.getServiceTypeId());
+
+            boolean dateChanged =
+                    !slot.getSlotDate().equals(request.getSlotDate());
+
+            boolean startTimeChanged =
+                    !slot.getStartTime().equals(request.getStartTime());
+
+            if (serviceTypeChanged || dateChanged || startTimeChanged) {
+                throw new IllegalArgumentException(
+                        "Cannot change service type, date or start time because this slot has existing bookings");
+            }
+        }
         ServiceType serviceType = serviceTypeRepository
                 .findById(request.getServiceTypeId())
                 .orElseThrow(() ->
@@ -201,10 +246,37 @@ public class ServiceSlotService {
             throw new IllegalArgumentException("Start time cannot be in the past");
         }
 
+        LocalTime endTime = request.getStartTime().plusMinutes(duration);
+
+        if (!endTime.isAfter(request.getStartTime())) {
+            throw new IllegalArgumentException(
+                    "Service slot cannot extend beyond midnight");
+        }
+
+
+        boolean slotOverlaps =
+                serviceSlotRepository
+                        .existsBySlotDateAndActiveTrueAndStartTimeLessThanAndEndTimeGreaterThanAndSlotIdNot(
+                                request.getSlotDate(),
+                                endTime,
+                                request.getStartTime(),
+                                slotId
+                        );
+
+        if (slotOverlaps) {
+            throw new IllegalArgumentException(
+                    "Another active slot already exists during the selected time");
+        }
+
+        if (request.getVehicleCapacity() < bookedVehicles) {
+            throw new IllegalArgumentException(
+                    "Vehicle capacity cannot be less than the number of existing bookings");
+        }
+
         slot.setServiceType(serviceType);
         slot.setSlotDate(request.getSlotDate());
         slot.setStartTime(request.getStartTime());
-        slot.setEndTime(request.getStartTime().plusMinutes(duration));
+        slot.setEndTime(endTime);
         slot.setVehicleCapacity(request.getVehicleCapacity());
         slot.setUpdatedAt(OffsetDateTime.now(ZoneOffset.UTC));
 
@@ -222,6 +294,19 @@ public class ServiceSlotService {
 
         if (!slot.isActive()) {
             throw new IllegalArgumentException("Service slot is already inactive");
+        }
+        long bookedVehicles =
+                bookingRepository.countBySlotSlotIdAndBookingStatusIn(
+                        slotId,
+                        List.of(
+                                Booking.BookingStatus.PENDING,
+                                Booking.BookingStatus.CONFIRMED
+                        )
+                );
+
+        if (bookedVehicles > 0) {
+            throw new IllegalArgumentException(
+                    "Cannot deactivate a service slot with existing pending or confirmed bookings");
         }
 
         slot.setActive(false);

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalTime;
 
 public interface ServiceSlotRepository
         extends JpaRepository<ServiceSlot, UUID> {
@@ -17,5 +18,18 @@ public interface ServiceSlotRepository
     List<ServiceSlot> findByServiceTypeServiceTypeIdAndSlotDateAndActiveTrue(
             UUID serviceTypeId,
             LocalDate slotDate
+    );
+
+    boolean existsBySlotDateAndActiveTrueAndStartTimeLessThanAndEndTimeGreaterThan(
+            LocalDate slotDate,
+            LocalTime endTime,
+            LocalTime startTime
+    );
+
+    boolean existsBySlotDateAndActiveTrueAndStartTimeLessThanAndEndTimeGreaterThanAndSlotIdNot(
+            LocalDate slotDate,
+            LocalTime endTime,
+            LocalTime startTime,
+            UUID slotId
     );
 }
