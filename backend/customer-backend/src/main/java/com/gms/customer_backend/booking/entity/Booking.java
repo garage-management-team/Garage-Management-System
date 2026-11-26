@@ -47,6 +47,9 @@ public class Booking {
     @Column(name = "garage_booking_id", unique = true)
     private UUID garageBookingId;
 
+    @Column(name = "garage_slot_id")
+    private UUID garageSlotId;
+
     @Column(name = "booking_date", nullable = false)
     private LocalDate bookingDate;
 
