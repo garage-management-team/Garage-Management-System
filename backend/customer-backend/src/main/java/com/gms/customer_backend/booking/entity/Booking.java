@@ -5,7 +5,7 @@ import com.gms.customer_backend.vehicle.entity.Vehicle;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import com.gms.customer_backend.booking.entity.BookingStatus;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -48,7 +48,7 @@ public class Booking {
     private UUID garageBookingId;
 
     @Column(name = "garage_slot_id")
-    private UUID garageSlotId;
+    private UUID garage_slot_Id;
 
     @Column(name = "booking_date", nullable = false)
     private LocalDate bookingDate;
@@ -63,13 +63,13 @@ public class Booking {
     @Column(name = "status", nullable = false, length = 30)
     private BookingStatus status = BookingStatus.PROCESSING;
 
-    @Column(name = "customer_note")
+    @Column(name = "customer_note", columnDefinition = "TEXT")
     private String customerNote;
 
-    @Column(name = "rejection_reason")
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
 
-    @Column(name = "cancellation_reason")
+    @Column(name = "cancellation_reason", columnDefinition = "TEXT")
     private String cancellationReason;
 
     @Column(name = "created_at", nullable = false, updatable = false)
