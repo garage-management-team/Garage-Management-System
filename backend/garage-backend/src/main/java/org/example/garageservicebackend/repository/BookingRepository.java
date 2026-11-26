@@ -17,4 +17,10 @@ public interface BookingRepository
     List<Booking> findByCustomerId(UUID customerId);
 
     boolean existsBySlotSlotIdAndCustomerId(UUID slotId, UUID customerId);
+
+    // Count bookings for a particular service slot by status
+    long countBySlotSlotIdAndBookingStatusIn(
+            UUID slotId,
+            List<BookingStatus> bookingStatuses
+    );
 }
