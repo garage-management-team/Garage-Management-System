@@ -7,7 +7,7 @@ COPY . .
 
 RUN chmod +x mvnw
 
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:21-jre
@@ -17,5 +17,6 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8082
+EXPOSE 9090
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
