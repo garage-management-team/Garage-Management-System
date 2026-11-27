@@ -17,8 +17,6 @@ public class BookingResponse {
 
     private UUID bookingId;
 
-    private UUID garageBookingId;
-
     private UUID vehicleId;
 
     private UUID serviceId;
