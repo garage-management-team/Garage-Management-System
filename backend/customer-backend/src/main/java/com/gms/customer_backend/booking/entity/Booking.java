@@ -19,7 +19,7 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "booking_id")
+    @Column(name = "booking_id",updatable = false,nullable = false)
     private UUID bookingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,11 +44,8 @@ public class Booking {
     @Column(name = "service_name", length = 150)
     private String serviceName;
 
-    @Column(name = "garage_booking_id", unique = true)
-    private UUID garageBookingId;
-
     @Column(name = "garage_slot_id")
-    private UUID garage_slot_Id;
+    private UUID garageSlotId;
 
     @Column(name = "booking_date", nullable = false)
     private LocalDate bookingDate;
