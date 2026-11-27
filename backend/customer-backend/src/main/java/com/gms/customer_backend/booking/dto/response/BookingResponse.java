@@ -17,13 +17,13 @@ public class BookingResponse {
 
     private UUID bookingId;
 
-    private UUID garageBookingId;
-
     private UUID vehicleId;
 
     private UUID serviceId;
 
     private String serviceName;
+
+    private UUID garageSlotId;
 
     private LocalDate bookingDate;
 
