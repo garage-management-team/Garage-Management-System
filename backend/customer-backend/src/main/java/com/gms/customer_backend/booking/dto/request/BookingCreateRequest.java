@@ -7,9 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import java.util.UUID;
 
 @Getter
@@ -21,6 +22,9 @@ public class BookingCreateRequest {
 
     @NotNull(message = "Service ID is required")
     private UUID serviceId;
+
+    @NotNull(message = "Slot ID is required")
+    private UUID slotId;
 
     @NotNull(message = "Booking date is required")
     @FutureOrPresent(message = "Booking date cannot be in the past")
@@ -59,7 +63,7 @@ public class BookingCreateRequest {
             return true;
         }
 
-        return bookingDate.equals(LocalDate.now())
-                && startTime.isAfter(LocalTime.now());
+        return LocalDateTime.of(bookingDate, startTime)
+                .isAfter(LocalDateTime.now());
     }
 }

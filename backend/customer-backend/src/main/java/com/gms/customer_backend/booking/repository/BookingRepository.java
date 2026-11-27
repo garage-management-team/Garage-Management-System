@@ -27,6 +27,9 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             BookingStatus status
     );
 
-    // Check whether a garage booking is already linked
-    boolean existsByGarageBookingId(UUID garageBookingId);
+    // Check whether a booking belongs to a customer
+    boolean existsByBookingIdAndCustomer_CustomerId(
+            UUID bookingId,
+            UUID customerId
+    );
 }
