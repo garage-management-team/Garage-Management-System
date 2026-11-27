@@ -6,13 +6,14 @@ import com.gms.customer_backend.booking.service.BookingService;
 import com.gms.customer_backend.common.response.ApiResponse;
 import com.gms.customer_backend.booking.dto.response.GarageServiceResponse;
 import jakarta.validation.Valid;
-
+import com.gms.customer_backend.booking.dto.request.BookingCreateRequest;
+import com.gms.customer_backend.booking.dto.response.BookingResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +23,27 @@ import java.util.UUID;
 public class BookingController {
 
     private final BookingService bookingService;
+
+    //  Create Booking
+    @PostMapping
+    public ResponseEntity<ApiResponse<BookingResponse>> createBooking(
+            @AuthenticationPrincipal String customerId,
+            @Valid @RequestBody BookingCreateRequest request) {
+
+        BookingResponse response = bookingService.createBooking(
+                UUID.fromString(customerId),
+                request
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        true,
+                        "Booking created successfully",
+                        response
+                ));
+    }
+
 
     // Check available time slots
     @GetMapping("/available-slots")
