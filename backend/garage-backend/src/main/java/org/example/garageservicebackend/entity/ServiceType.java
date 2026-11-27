@@ -3,6 +3,7 @@ package org.example.garageservicebackend.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import jakarta.persistence.Column;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -27,6 +28,7 @@ public class ServiceType {
 
     @Column(name = "estimated_duration_minutes", nullable = false)
     private Integer estimatedDurationMinutes;
+
 
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
