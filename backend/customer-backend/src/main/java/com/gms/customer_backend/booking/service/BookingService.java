@@ -1,6 +1,7 @@
 package com.gms.customer_backend.booking.service;
 
-
+import com.gms.customer_backend.booking.kafka.event.BookingCreatedEvent;
+import com.gms.customer_backend.booking.kafka.producer.BookingKafkaProducer;
 import com.gms.customer_backend.booking.dto.request.BookingCreateRequest;
 import com.gms.customer_backend.booking.dto.response.BookingResponse;
 import com.gms.customer_backend.booking.entity.Booking;
@@ -32,6 +33,7 @@ public class BookingService {
     private final GarageServicesGrpcClient garageServicesGrpcClient;
     private final BookingRepository bookingRepository;
     private final CustomerRepository customerRepository;
+    private final BookingKafkaProducer bookingKafkaProducer;
 
     @Transactional(readOnly = true)
     public List<AvailableSlotResponse> getAvailableSlots(
@@ -125,8 +127,25 @@ public class BookingService {
         // 5. Save booking in Customer Database
         Booking savedBooking = bookingRepository.save(booking);
 
-        // 6. Return response
-        return mapToResponse(savedBooking);
+        // 6. Create Kafka event
+                BookingCreatedEvent event = new BookingCreatedEvent(
+                        savedBooking.getBookingId(),
+                        savedBooking.getCustomer().getCustomerId(),
+                        savedBooking.getVehicle().getVehicleId(),
+                        savedBooking.getServiceId(),
+                        savedBooking.getServiceName(),
+                        savedBooking.getGarageSlotId(),
+                        savedBooking.getBookingDate(),
+                        savedBooking.getStartTime(),
+                        savedBooking.getEndTime(),
+                        savedBooking.getCustomerNote()
+                );
+
+        // 7. Publish booking request to Kafka
+                bookingKafkaProducer.sendBookingRequest(event);
+
+        // 8. Return response
+                return mapToResponse(savedBooking);
     }
 
     private BookingResponse mapToResponse(Booking booking) {
