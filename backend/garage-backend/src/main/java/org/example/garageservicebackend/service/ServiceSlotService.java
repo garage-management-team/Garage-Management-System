@@ -82,7 +82,7 @@ public class ServiceSlotService {
 
         if (!endTime.isAfter(request.getStartTime())) {
             throw new IllegalArgumentException(
-                    "Service slot cannot extend beyond midnight");
+                    "Service slot end time must be after start time. Slots cannot extend beyond midnight.");
         }
 
         boolean slotOverlaps =
@@ -252,7 +252,7 @@ public class ServiceSlotService {
 
         if (!endTime.isAfter(request.getStartTime())) {
             throw new IllegalArgumentException(
-                    "Service slot cannot extend beyond midnight");
+                    "ervice slot end time must be after start time. Slots cannot extend beyond midnight");
         }
 
 
