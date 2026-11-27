@@ -23,6 +23,8 @@ public class BookingResponse {
 
     private String serviceName;
 
+    private UUID garageSlotId;
+
     private LocalDate bookingDate;
 
     private LocalTime startTime;
