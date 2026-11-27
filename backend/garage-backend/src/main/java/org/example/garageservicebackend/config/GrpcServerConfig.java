@@ -4,6 +4,8 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import org.example.garageservicebackend.grpc.GarageAvailabilityGrpcService;
+import org.example.garageservicebackend.grpc.GarageServicesGrpcService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +19,15 @@ public class GrpcServerConfig {
     private int grpcPort;
 
     @Bean(destroyMethod = "shutdown")
-    public Server grpcServer(GarageAvailabilityGrpcService grpcService)
-            throws IOException {
+    public Server grpcServer(
+            GarageAvailabilityGrpcService availabilityService,
+            GarageServicesGrpcService servicesService
+    ) throws IOException {
 
         return ServerBuilder
                 .forPort(grpcPort)
-                .addService(grpcService)
+                .addService(availabilityService)
+                .addService(servicesService)
                 .build()
                 .start();
     }

@@ -74,7 +74,7 @@ public class GarageAvailabilityGrpcService
     }
 
     private AvailableSlot mapToGrpcSlot(ServiceSlotResponse slot) {
-
+//convert java dto into Protobuf
         return AvailableSlot.newBuilder()
                 .setSlotId(slot.getSlotId().toString())
                 .setServiceId(slot.getServiceTypeId().toString())

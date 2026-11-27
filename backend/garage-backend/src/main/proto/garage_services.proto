@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package garage.services;
+
+option java_multiple_files = true;
+option java_package = "com.gms.grpc.services";
+option java_outer_classname = "GarageServicesProto";
+
+service GarageServicesService {
+    rpc GetActiveServices (GetServicesRequest)
+        returns (GetServicesResponse);
+}
+
+message GetServicesRequest {
+}
+
+message GetServicesResponse {
+    repeated ServiceType services = 1;
+}
+
+message ServiceType {
+    string service_id = 1;
+    string service_name = 2;
+    string description = 3;
+    int32 estimated_duration_minutes = 4;
+    string price = 5;
+}
